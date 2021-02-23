@@ -23,36 +23,31 @@ int main(int argc, char** argv)
 
 string contentsOfJsonString(string jsonString)
 {   
-    int firstInstance = -1;
-    int lastInstance = -1;
-    int count = 0;
 
-    for(int i = 0; i < jsonString.length(); i++)
-    {   
-        if(jsonString.at(i) == '[')
-        {
-            count++;
-            if(firstInstance == -1)
+    string temp = "";
+    if(jsonString[0] = '[')
+    {
+        int count = 1;
+        for(int i = 1; i < jsonString.length(); i++)
+        {   
+            if(jsonString.at(i) == '[')
             {
-                firstInstance = i;
+                count++;
             }
-        }
-        else if(jsonString.at(i) == ']')
-        {
-            count--;
-        }
+            else if(jsonString.at(i) == ']')
+            {
+                count--;
+                if(count == 0)
+                {
+                    return temp;
+                }
+            }
 
-        lastInstance++;
-
-        if(count == 0 && i != 0)
-        {
-            jsonString.erase(firstInstance , 1);
-            jsonString.erase(lastInstance - 1 ,1);
-            return jsonString;
+            temp = temp + jsonString[i];
         }
- 
     }
-    return "Did not find any JSON strings";
+    return "Something went wrong";
+
 }
 
 
