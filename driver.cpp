@@ -26,7 +26,7 @@ string processJsonArray(string jsonString, int start)
 {   
 
     string temp = "";
-    int count = 0;
+    int count = 1;
 
     for(int i = start + 1; i < jsonString.length(); i++)
     {   
@@ -67,21 +67,23 @@ string processJsonObject(string jsonString, int start)
 {
     if(jsonString[start] == '[')
     {
-        processJsonArray(jsonString, start);
+        return processJsonArray(jsonString, start);
     }
     else if(jsonString[start] == '{')
     {
         //must be a JSON Object 
 
         string temp = "";
-        int countCurlyBraces = 0;
+        int countCurlyBraces = 1;
         for(int i = start + 1; i < jsonString.length(); i++)
         {   
             
-            if(jsonString.at(i) == '{')
+            if(jsonString[i] == '{')
             {   temp += '{';
                 string answer = processJsonObject(jsonString, i);
                 temp += answer;
+
+                //you force i to jump ahead 
                 i += answer.length()+1;
                 countCurlyBraces++;
             }
@@ -102,6 +104,7 @@ string processJsonObject(string jsonString, int start)
                 temp += answer;
                 i += answer.length();
             }
+
             if(i < jsonString.length())
             {
                 temp = temp + jsonString[i];
