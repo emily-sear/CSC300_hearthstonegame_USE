@@ -6,7 +6,8 @@
 using namespace std;
 
 // all functions before implementation so they can be used before they are implemented
-string contentsOfJsonString(string jsonString);
+string processJsonArray(string jsonString, int start);
+string processJsonObject(string jsonString, int start);
 
 int main(int argc, char** argv)
 {
@@ -15,41 +16,100 @@ int main(int argc, char** argv)
 
     string testJson = "[{fname:val1, lname: val2, sums:[1,2,3]},{fname:val3, lname:val4}]";
 
-    string whatsReturned = contentsOfJsonString(testJson);
-    cout << whatsReturned << endl; 
+    processJsonObject(testJson, 0);
+    //cout << whatsReturned << endl; 
 
     return 0;
 }
 
-string contentsOfJsonString(string jsonString)
+string processJsonArray(string jsonString, int start)
 {   
 
     string temp = "";
-    if(jsonString[0] = '[')
-    {
-        int count = 1;
-        for(int i = 1; i < jsonString.length(); i++)
-        {   
-            if(jsonString.at(i) == '[')
-            {
-                count++;
-            }
-            else if(jsonString.at(i) == ']')
-            {
-                count--;
-                if(count == 0)
-                {
-                    return temp;
-                }
-            }
+    int count = 0;
 
+    for(int i = start + 1; i < jsonString.length(); i++)
+    {   
+        if(jsonString.at(i) == '[')
+        {
+            string answer = processJsonArray(jsonString, i);
+            temp += answer;
+            i += answer.length() + 1;
+            count++;
+        }
+        else if(jsonString.at(i) == ']')
+        {
+            count--;
+            if(count == 0)
+            {
+                cout << temp << endl;
+                return temp;
+            }
+        }
+        else if(jsonString[i] == '{')
+        {
+            temp += '{';
+            string answer = processJsonObject(jsonString, i);
+            temp += answer;
+            i += answer.length() + 1;
+        }
+        if( i < jsonString.length())
+        {
             temp = temp + jsonString[i];
         }
     }
-    return "Something went wrong";
+
+    //return "Something went wrong";
 
 }
 
+string processJsonObject(string jsonString, int start)
+{
+    if(jsonString[start] == '[')
+    {
+        processJsonArray(jsonString, start);
+    }
+    else if(jsonString[start] == '{')
+    {
+        //must be a JSON Object 
+
+        string temp = "";
+        int countCurlyBraces = 0;
+        for(int i = start + 1; i < jsonString.length(); i++)
+        {   
+            
+            if(jsonString.at(i) == '{')
+            {   temp += '{';
+                string answer = processJsonObject(jsonString, i);
+                temp += answer;
+                i += answer.length()+1;
+                countCurlyBraces++;
+            }
+            else if(jsonString.at(i) == '}')
+            {
+                countCurlyBraces--;
+                if(countCurlyBraces == 0)
+                {
+                    cout << temp << endl;
+                    return temp; 
+                    
+                }
+            }
+            else if(jsonString.at(i) == '[')
+            {
+                temp += '[';
+                string answer = processJsonArray(jsonString, i);
+                temp += answer;
+                i += answer.length();
+            }
+            if(i < jsonString.length())
+            {
+                temp = temp + jsonString[i];
+            }
+        }
+    
+    }
+}
 
 
 
