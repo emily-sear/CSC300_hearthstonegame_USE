@@ -1,6 +1,7 @@
-#include "Card.hpp"
+
 #include "URL.hpp"
 #include "json.hpp"
+#include "LinkedList.hpp"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -18,8 +19,9 @@ int main(int argc, char** argv)
     URL* u1 = new URL("https://api.hearthstonejson.com/v1/25770/enUS/cards.json");
     string jsonString = u1->getContents(); // this is a string of the URL above
     json parsedJson = json::parse(jsonString);
+    LinkedList* theCards = new LinkedList();
 
-    Card* theCards[parsedJson.size()];
+    //Card* theCards[parsedJson.size()];
 
 
     if(parsedJson.is_array())
@@ -34,22 +36,26 @@ int main(int argc, char** argv)
                 int attack = currValue.value("attack", -1);
                 int health = currValue.value("health", -1);
                 int manaCost = currValue.value("cost", -1);
-                theCards[i] = new Card(name, type, manaCost, attack, health);
-                //theCards[i]->display();
+                theCards->addEnd(new Card(name, type, manaCost, attack, health));
+                //theCards[i]->
             }
  
         } 
     }
 
+   // theCards->display();
+    theCards->insertionSortOnDefense();
+    theCards->display();
+
     vector<Card*> theMinions;
 
-    for(int j = 0; j < parsedJson.size() ; j++)
+   /** for(int j = 0; j < parsedJson.size() ; j++)
     {
         if(theCards[j]->getType().compare("MINION") == 0)
         {
             theMinions.push_back(theCards[j]);
         }
-    }
+    } **/
 
     int sizeOfMinions = theMinions.size();
 
@@ -60,7 +66,7 @@ int main(int argc, char** argv)
         theMinions.at(k)->display();
     }
 
-    cout << theMinions.size() << endl;
+    
 
     return 0;
 }
